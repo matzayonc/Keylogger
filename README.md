@@ -1,3 +1,2 @@
 # Keylogger
-Simple C++ Keylogger...
-Send logs to node.js server
+Small C++ Keylogger
